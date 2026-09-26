@@ -1,0 +1,96 @@
+:root {
+  
+  color-scheme: light;
+
+  
+  --surface-canvas:  #F4F4F1;   
+  --surface-panel:   #FDFDFB;   
+  --surface-raised:  #FFFFFF;   
+  --surface-sunken:  #E9E9E4;   
+
+  
+  --border-hairline: #E4E4DF;   
+  --border-default:  #D3D3CD;   
+  --border-strong:   #B5B5AE;   
+
+  
+  --text-primary:    #1B1E20;   
+  --text-secondary:  #5B6167;   
+  --text-tertiary:   #81878D;   
+  --text-inverse:    #FAFAF8;   
+
+  
+  --accent-cinnabar:        #B8402B;   
+  --accent-cinnabar-soft:   #FAEDE9;
+  --accent-cinnabar-text:   #9C3520;
+  --accent-azurite:         #2E6288;   
+  --accent-azurite-soft:    #EAF1F7;
+  --accent-azurite-text:    #24557A;
+  --accent-malachite:       #2F7A57;   
+  --accent-malachite-soft:  #E9F3EE;
+  --accent-malachite-text:  #27684A;
+  --accent-ochre:           #A96A22;   
+  --accent-ochre-soft:      #F8EFE2;
+  --accent-ochre-text:      #8A5517;
+  --accent-maroon:          #8E2A38;   
+  --accent-maroon-soft:     #F7ECEE;
+  --accent-maroon-text:     #82232F;
+  --focus-ring:             rgba(184, 64, 43, 0.35);
+
+  
+  --space-0: 2px;  --space-1: 4px;  --space-2: 8px;   --space-3: 12px; --space-4: 16px;
+  --space-5: 24px; --space-6: 32px; --space-7: 48px;  --space-8: 64px; --space-9: 96px;
+
+  
+  --radius-xs: 2px; --radius-sm: 4px; --radius-md: 6px; --radius-lg: 10px;
+
+  
+  --control-sm: 28px; --control-md: 34px; --control-lg: 40px;
+
+  
+  --font-display: 26px; --font-h2: 20px; --font-h3: 16px;
+  --font-body: 15px;    --font-caption: 13px; --font-micro: 12px;
+
+  
+  --f-title: "CK3Huiji", "STZhongsong", "SimSun", serif;
+  --f-bold:  "CK3ZhenKai", "Microsoft YaHei", sans-serif;
+  --f-body:  "CK3WenKai", "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+  --f-mono:  "JetBrains Mono", Consolas, ui-monospace, monospace;
+
+  
+  --text-on-accent: #FFF6F3;
+  --switch-knob:    #FFFFFF;   
+}
+
+[data-theme="dark"] {
+  --surface-canvas:  #0E1012;
+  --surface-panel:   #171A1E;
+  --surface-raised:  #20242A;
+  --surface-sunken:  #0A0C0E;
+
+  --border-hairline: #24282E;
+  --border-default:  #333940;
+  --border-strong:   #4B535D;
+
+  --text-primary:    #E7E9EB;
+  --text-secondary:  #9AA2AA;
+  --text-tertiary:   #6A727A;
+  --text-inverse:    #14171A;
+
+  --accent-cinnabar:        #C24E36;
+  --accent-cinnabar-soft:   #2A1713;
+  --accent-cinnabar-text:   #E2705A;
+  --accent-azurite:         #5E93BE;
+  --accent-azurite-soft:    #14212B;
+  --accent-azurite-text:    #7FB0D8;
+  --accent-malachite:       #4E9C74;
+  --accent-malachite-soft:  #10211A;
+  --accent-malachite-text:  #6FBE93;
+  --accent-ochre:           #C68C43;
+  --accent-ochre-soft:      #241B10;
+  --accent-ochre-text:      #D9A360;
+  --accent-maroon:          #B85060;
+  --accent-maroon-soft:     #26141A;
+  --accent-maroon-text:     #CE7280;
+  --focus-ring:             rgba(194, 78, 54, 0.45);
+}
