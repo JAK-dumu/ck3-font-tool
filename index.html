@@ -510,12 +510,14 @@ label.chk input { width: 16px; height: 16px; margin: 0; accent-color: var(--acce
         <div class="row">
           <button class="btn btn--md btn--ghost" id="sendbtn" type="button" disabled>选择游戏 mod 目录</button>
           <span class="where" id="sendhint">浏览器无法写入游戏目录，请先下载再手动解压</span>
+          <button class="btn btn--link" id="redirbtn" type="button" hidden>重新选目录</button>
           <button class="btn btn--link" id="uninstallbtn" type="button" hidden>移除已写入的 mod</button>
         </div>
 
         <div class="row" id="confirmrow" hidden>
           <span class="where" id="confirmtxt">确认写入所选目录？</span>
           <button class="btn btn--md btn--primary" id="confirmyes" type="button">确认写入</button>
+          <button class="btn btn--md btn--ghost" id="confirmpath" type="button">改路径</button>
           <button class="btn btn--md btn--ghost" id="confirmno" type="button">取消</button>
         </div>
 
@@ -989,18 +991,47 @@ function boot(){
       });
     } catch (e) { return null; }
   }
+  async function idbDel(k){
+    try {
+      const db = await idbOpen();
+      await new Promise((res, rej) => {
+        const tx = db.transaction("kv", "readwrite");
+        tx.objectStore("kv").delete(k);
+        tx.oncomplete = res; tx.onerror = () => rej(tx.error);
+      });
+    } catch (e) { /* 删除失败无碍 */ }
+  }
 
-  
+  /* 从目录里已安装 mod 的 .mod 反推 mod 目录绝对路径。
+     只认「本地式」mod：外层文件名 = path 最后一段 + .mod（X.mod → path=…/X）。
+     工坊订阅的 ugc_<id>.mod 其 path 指向 Steam 目录且末段是纯数字 id，与文件名对不上，
+     一旦误抓会把路径识别到 Steam 目录去（2026-09-25 用户实测踩坑）。 */
   async function detectBase(dir){
     try {
       for await (const [name, h] of dir.entries()){
         if (h.kind !== "file" || !/\.mod$/i.test(name)) continue;
         const text = await (await h.getFile()).text();
         const m = text.match(/path\s*=\s*"([^"]+)"/);
-        if (m && /^([A-Za-z]:[\\/]|\/)/.test(m[1])) return m[1].replace(/[\\/][^\\/]+$/, "");
+        if (!m || !/^([A-Za-z]:[\\/]|\/)/.test(m[1])) continue;
+        const seg = m[1].replace(/[\\/]+$/, "").split(/[\\/]/).pop();
+        if (seg && seg + ".mod" === name) return m[1].replace(/[\\/][^\\/]+$/, "");
       }
     } catch (e) {  }
     return null;
+  }
+
+  /* 路径解析：手填(参数) > 按目录名匹配的历史记录 > 目录内识别。
+     历史记录按目录名绑定，换了目录自动失效，杜绝把 A 目录的路径用到 B 目录。 */
+  let lastBase = null;
+  async function resolveBase(dir){
+    try {
+      const raw = JSON.parse(localStorage.getItem("ck3ft-base") || "null");
+      if (raw && raw.dir === dir.name && raw.base) return raw.base;
+    } catch (e) { /* 旧格式或无记录，走识别 */ }
+    return detectBase(dir);
+  }
+  function saveBase(dir, base){
+    try { localStorage.setItem("ck3ft-base", JSON.stringify({ dir: dir.name, base })); } catch (e) {  }
   }
 
   async function writeEntries(dir, entries){
@@ -1060,18 +1091,18 @@ function boot(){
     try {
       const dir = await ensureDir();
       if (!dir) return;
-      let base = forcedBase || localStorage.getItem("ck3ft-base") || await detectBase(dir);
+      let base = forcedBase || await resolveBase(dir);
       if (!base){
         
         pathrow.hidden = false;
         if (!modpath.value) modpath.value = "C:/Users/你的用户名/Documents/Paradox Interactive/Crusader Kings III/mod";
-        sendhint.textContent = "这个目录里没有已安装的 mod，无法自动识别路径，请填一次上面的完整路径";
+        sendhint.textContent = "这个目录里没有可识别的 mod，请填入完整路径后点「用这个路径发送」";
         modpath.focus();
         return;
       }
       base = base.replace(/[\\/]+$/, "");
       const n = await writeEntries(dir, entriesWithPath(base));
-      try { localStorage.setItem("ck3ft-base", base); } catch (e) {  }
+      try { saveBase(dir, base); } catch (e) {  }
       pathrow.hidden = true;
       clearError();
       $("genmsgtext").textContent = "已把 " + n + " 个文件写进 mod 目录：" + T.state.modName +
@@ -1119,17 +1150,43 @@ function boot(){
         writeLastwrite(list);
       }
       refreshUninstall();
-      sendhint.textContent = "已选定目录「" + dir.name + "」，游戏 mod 目录通常在：文档\\Paradox Interactive\\Crusader Kings III\\mod";
+      lastBase = await resolveBase(dir);
+      $("redirbtn").hidden = false;
+      sendhint.textContent = "已选定目录「" + dir.name + "」，识别路径：" +
+        (lastBase || "未识别（发送时需手填）");
       return;
     }
-    confirmtxt.textContent = "确认把 mod「" + T.state.modName + "」写入目录「" + dirHandle.name + "」？写入会覆盖同名文件。";
+    lastBase = await resolveBase(dirHandle);
+    if (!lastBase){
+      pathrow.hidden = false;
+      if (!modpath.value) modpath.value = "C:/Users/你的用户名/Documents/Paradox Interactive/Crusader Kings III/mod";
+      sendhint.textContent = "未能识别路径，请填写完整路径后点「用这个路径发送」";
+      modpath.focus();
+      return;
+    }
+    confirmtxt.textContent = "目录「" + dirHandle.name + "」，mod 路径：" + lastBase +
+      "。确认写入「" + T.state.modName + "」？（覆盖同名文件）";
     confirmrow.hidden = false;
   });
   $("confirmyes").addEventListener("click", async () => {
     confirmrow.hidden = true;
-    await sendToModDir();
+    await sendToModDir(lastBase);
+  });
+  $("confirmpath").addEventListener("click", () => {
+    confirmrow.hidden = true;
+    pathrow.hidden = false;
+    if (!modpath.value) modpath.value = lastBase || "C:/Users/你的用户名/Documents/Paradox Interactive/Crusader Kings III/mod";
+    sendhint.textContent = "请修改完整路径后点「用这个路径发送」";
+    modpath.focus();
   });
   $("confirmno").addEventListener("click", () => { confirmrow.hidden = true; });
+  $("redirbtn").addEventListener("click", async () => {
+    dirHandle = null;
+    await idbDel("dir");
+    disarmSend();
+    $("redirbtn").hidden = true;
+    sendhint.textContent = "游戏 mod 目录通常在：文档\\Paradox Interactive\\Crusader Kings III\\mod";
+  });
 
   
   async function scanFontMods(dir){
