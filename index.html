@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CK3 中文字体替换器 · Chinese Font Replacer</title>
+<script>
+
+(function () {
+  try {
+    var saved = localStorage.getItem("ck3ft-theme");
+    var sys = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.setAttribute("data-theme", saved || (sys ? "dark" : "light"));
+  } catch (e) {
+    document.documentElement.setAttribute("data-theme", "light");
+  }
+})();
+</script>
+<link rel="stylesheet" href="design-tokens.css">
+<style>
+
+
+@font-face { font-family: "CK3WenKai"; src: url("fonts_page/LXGWWenKaiGB-Regular.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "CK3ZhenKai"; src: url("fonts_page/LXGWZhenKaiGB-Regular.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "CK3Huiji";  src: url("fonts_page/CooperZhengKai-1.1.ttf") format("truetype"); font-display: swap; }
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--surface-canvas);
+  color: var(--text-primary);
+  font: 400 var(--font-body) / 26px var(--f-body);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+
+.page {
+  display: flex; flex-direction: column; gap: var(--space-7);
+  max-width: 1128px; margin: 0 auto; padding: 52px 24px;
+}
+
+
+.hdr { display: flex; flex-direction: column; gap: 14px; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
+.brand {
+  font-family: var(--f-mono); font-size: 11px; line-height: 1.4;
+  letter-spacing: 3px; color: var(--text-secondary);
+}
+.seg { display: flex; padding: 2px; border-radius: var(--radius-sm); background: var(--surface-sunken); }
+.seg-btn {
+  height: 24px; padding: 0 10px; border: 0; border-radius: var(--radius-xs);
+  background: transparent; color: var(--text-secondary); cursor: pointer;
+  font: 400 var(--font-micro) / 1 var(--f-body);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.seg-btn[aria-pressed="true"] { background: var(--surface-raised); color: var(--text-primary); }
+.seg-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--focus-ring); }
+
+
+.title-row { display: flex; align-items: center; gap: var(--space-4); }
+h1 {
+  margin: 0; min-width: 0;
+  font-family: var(--f-title); font-weight: 400;
+  font-size: var(--font-display); line-height: 36px; letter-spacing: 2px;
+  color: var(--text-primary);
+}
+.lead { margin: 0; color: var(--text-secondary); }
+.rule { width: 72px; height: 3px; border-radius: 2px; background: var(--accent-cinnabar); }
+.meta {
+  display: flex; align-items: center; gap: var(--space-5);
+  font-size: var(--font-micro); line-height: 18px; color: var(--text-secondary);
+}
+.meta .mono { font-family: var(--f-mono); }
+.vline { width: 1px; height: 12px; background: var(--border-strong); }
+
+
+.notice {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: 10px 14px; border-radius: var(--radius-sm);
+  font-size: var(--font-caption); line-height: 22px;
+}
+.notice .bar { flex: 0 0 auto; width: 3px; align-self: stretch; margin-block: 1px; border-radius: 2px; }
+
+.notice p { margin: 0; }
+.notice--info    { background: var(--accent-azurite-soft);   color: var(--accent-azurite-text); }
+.notice--ochre   { background: var(--accent-ochre-soft);     color: var(--accent-ochre-text); }
+.notice--success { background: var(--accent-malachite-soft); color: var(--accent-malachite-text); }
+.notice--error   { background: var(--accent-maroon-soft);    color: var(--accent-maroon-text); }
+.notice--info .bar    { background: var(--accent-azurite); }
+.notice--ochre .bar   { background: var(--accent-ochre); }
+.notice--success .bar { background: var(--accent-malachite); }
+.notice--error .bar   { background: var(--accent-maroon); }
+.notice--ochre b, .notice--error b { font-family: var(--f-bold); font-weight: 400; }
+
+
+.step { display: flex; flex-direction: column; }
+.step-head {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-hairline);
+}
+.step-head .no {
+  flex: 0 0 auto; font-family: var(--f-mono); font-size: var(--font-micro);
+  letter-spacing: 2px; color: var(--accent-cinnabar-text);
+}
+.step-head h2 {
+  flex: 1 1 auto; margin: 0;
+  font-family: var(--f-title); font-weight: 400;
+  font-size: var(--font-h2); line-height: 32px; letter-spacing: 1px;
+  color: var(--text-primary);
+}
+.step-body { display: flex; flex-direction: column; gap: var(--space-4); padding-top: var(--space-4); }
+
+.tag {
+  flex: 0 0 auto; padding: 4px 8px; border-radius: var(--radius-xs);
+  font-size: 11px; line-height: 1.2; white-space: nowrap;
+}
+.tag--neutral   { background: var(--surface-sunken);    color: var(--text-secondary); border: 1px solid var(--border-default); }
+.tag--malachite { background: var(--accent-malachite-soft); color: var(--accent-malachite-text); }
+.tag--ochre     { background: var(--accent-ochre-soft);     color: var(--accent-ochre-text); }
+.tag--azurite   { background: var(--accent-azurite-soft);   color: var(--accent-azurite-text); }
+
+
+#dropzone {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; height: 104px; padding: 0 20px; text-align: center;
+  border: 1px dashed var(--border-strong); border-radius: var(--radius-sm);
+  background: var(--surface-panel); cursor: pointer;
+  transition: border-color 120ms ease, background-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
+}
+#dropzone:focus-visible { outline: none; border-color: var(--accent-cinnabar); box-shadow: 0 0 0 3px var(--focus-ring); }
+.dz-main { font-size: var(--font-caption); line-height: 22px; color: var(--text-secondary); }
+.dz-main b { font-family: var(--f-bold); font-weight: 400; color: var(--text-primary); }
+.dz-hint { font-size: var(--font-micro); line-height: 18px; color: var(--text-secondary); }
+.dz-hint[data-loaded] { display: none; }
+#dropzone.drag {
+  border-color: var(--accent-cinnabar); border-style: solid;
+  background: var(--accent-cinnabar-soft); color: var(--accent-cinnabar-text);
+}
+#dropzone.drag .dz-main, #dropzone.drag .dz-hint { color: var(--accent-cinnabar-text); }
+body:has(#fontlist .fcard) #dropzone {
+  border-color: var(--accent-malachite); border-style: solid;
+  background: var(--accent-malachite-soft);
+}
+body:has(#fontlist .fcard) .dz-main { color: var(--accent-malachite-text); }
+body:has(#fontlist .fcard) .dz-main b { color: inherit; }
+body:has(#fontlist .fcard) .dz-hint[data-idle] { display: none; }
+body:has(#fontlist .fcard) .dz-hint[data-loaded] { display: block; color: var(--accent-malachite-text); }
+
+
+#fontlist { display: flex; flex-direction: column; gap: 10px; }
+#fontlist:empty { display: none; }
+.fcard {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: 8px 12px;
+  background: var(--surface-panel);
+  border: 1px solid var(--border-default); border-radius: var(--radius-sm);
+}
+.fcard .glyph {
+  flex: 0 0 auto; min-width: 28px; text-align: center;
+  font-family: var(--f-title); font-size: 26px; line-height: 1;
+  color: var(--accent-cinnabar-text);
+}
+.fcard .info { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.fcard .fname {
+  font-family: var(--f-mono); font-size: var(--font-caption); line-height: 22px; color: var(--text-primary);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.fcard .fpath { font-size: 11px; line-height: 18px; color: var(--text-secondary); }
+.fcard .fmiss { font-size: 11px; line-height: 18px; color: var(--accent-ochre-text); }
+.fcard .btn-x {
+  flex: 0 0 auto; display: inline-flex; padding: 0; border: 0; background: none;
+  cursor: pointer; color: var(--accent-maroon);
+  transition: color 120ms ease;
+}
+.fcard .btn-x:hover { color: var(--accent-maroon-text); }
+.fcard .btn-x:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--focus-ring); border-radius: var(--radius-xs); }
+
+
+.panel {
+  display: flex; flex-direction: column; gap: var(--space-4);
+  padding: 18px;
+  background: var(--surface-panel);
+  border: 1px solid var(--border-default); border-radius: var(--radius-md);
+}
+.panel--flush { gap: 0; padding: 8px 18px; }
+.slot, .prow {
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: 12px 0;
+}
+.slot:not(:last-child) { border-bottom: 1px solid var(--border-hairline); }
+#slots + .prow { border-top: 1px solid var(--border-hairline); }
+.prow:not(:last-child) { border-bottom: 1px solid var(--border-hairline); }
+.field-label {
+  flex: 0 0 132px;
+  font-family: var(--f-bold); font-weight: 400;
+  font-size: var(--font-h3); letter-spacing: 1px; color: var(--text-primary);
+}
+.slot .mid {
+  flex: 1 1 auto; min-width: 0;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+}
+.slot .where, .prow .where {
+  flex: 1 1 auto; min-width: 0;
+  font-size: var(--font-micro); line-height: 18px; color: var(--text-secondary);
+}
+
+select {
+  flex: 0 0 auto; width: 240px; height: var(--control-md); padding: 0 10px;
+  border: 1px solid var(--border-default); border-radius: var(--radius-sm);
+  background: var(--surface-sunken); color: var(--text-primary);
+  font-family: var(--f-body); font-size: var(--font-caption); cursor: pointer;
+}
+select:focus-visible { outline: none; border-color: var(--accent-cinnabar); box-shadow: 0 0 0 3px var(--focus-ring); }
+
+label.chk {
+  flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px;
+  font-size: var(--font-micro); color: var(--text-secondary); white-space: nowrap; cursor: pointer;
+}
+label.chk input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent-cinnabar); cursor: pointer; }
+
+
+.switch {
+  position: relative; flex: 0 0 auto;
+  width: 44px; height: 24px; padding: 0; border: 0; border-radius: 999px;
+  background: var(--accent-cinnabar); cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.switch::after {
+  content: ""; position: absolute; top: 3px; left: 23px;
+  width: 18px; height: 18px; border-radius: 999px; background: var(--switch-knob);
+  transition: left 120ms ease;
+}
+.switch[aria-checked="false"] { background: var(--border-strong); }
+.switch[aria-checked="false"]::after { left: 3px; }
+.switch:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--focus-ring); }
+
+
+.slider {
+  flex: 0 0 auto; width: 360px; height: 34px; margin: 0;
+  -webkit-appearance: none; appearance: none;
+  background: transparent; cursor: pointer;
+}
+.slider::-webkit-slider-runnable-track {
+  height: 4px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent-cinnabar) var(--fill, 60%), var(--surface-sunken) var(--fill, 60%));
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 16px; height: 16px; margin-top: -6px; border: 2px solid var(--surface-panel);
+  border-radius: 999px; background: var(--accent-cinnabar);
+}
+.slider::-moz-range-track { height: 4px; border-radius: 2px; background: var(--surface-sunken); }
+.slider::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--accent-cinnabar); }
+.slider::-moz-range-thumb {
+  width: 16px; height: 16px; border: 2px solid var(--surface-panel);
+  border-radius: 999px; background: var(--accent-cinnabar);
+}
+.slider:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--focus-ring); border-radius: var(--radius-sm); }
+
+
+#preview {
+  overflow: hidden;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border-hairline); border-radius: var(--radius-md);
+}
+.pvblock { display: flex; flex-direction: column; gap: 10px; padding: var(--space-4) 18px; }
+.pvblock:not(:last-child) { border-bottom: 1px solid var(--border-hairline); }
+.pvhead { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.pvhead .spec {
+  font-family: var(--f-mono); font-size: 11px; line-height: 18px;
+  color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pvtext { color: var(--text-primary); line-height: 1.75; word-break: break-word; }
+.pvtext + .pvtext { margin-top: 6px; }
+.pvempty { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 22px 18px; }
+.pvempty .mi { color: var(--border-strong); }
+.pvempty p { margin: 0; font-size: var(--font-caption); line-height: 22px; color: var(--text-secondary); }
+
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  height: var(--control-lg); padding: 0 22px;
+  border: 1px solid transparent; border-radius: var(--radius-sm);
+  font-family: var(--f-bold); font-weight: 400; font-size: var(--font-body); line-height: 1;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease, filter 120ms ease;
+}
+.btn--primary { background: var(--accent-cinnabar); color: var(--text-on-accent); }
+.btn--primary:hover { filter: brightness(0.92); }
+.btn--primary:active { filter: brightness(0.84); }
+.btn--ghost {
+  background: var(--surface-panel); color: var(--text-primary);
+  border-color: var(--border-default); font-family: var(--f-body);
+}
+.btn--ghost:hover { background: var(--surface-sunken); border-color: var(--border-strong); }
+.btn--md { height: var(--control-md); padding: 0 16px; font-size: 14px; }
+.btn--link {
+  height: var(--control-sm); padding: 0 12px; border: 0; background: none;
+  color: var(--accent-cinnabar-text); font-size: var(--font-caption);
+}
+.btn--link:hover { background: var(--accent-cinnabar-soft); }
+.btn--bare { height: var(--control-sm); padding: 0 4px; border: 0; background: none; color: var(--text-secondary); font-size: var(--font-caption); }
+.btn--bare:hover { color: var(--accent-maroon-text); }
+.btn--danger { color: var(--accent-maroon-text); font-family: var(--f-body); }
+.btn:disabled {
+  background: var(--surface-sunken); color: var(--text-tertiary);
+  border-color: transparent; cursor: not-allowed; filter: none;
+}
+.btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--focus-ring); }
+
+.row { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+
+
+.label { font-size: var(--font-caption); line-height: 22px; color: var(--text-secondary); }
+.input {
+  width: 320px; height: var(--control-md); padding: 0 10px;
+  border: 1px solid var(--border-default); border-radius: var(--radius-sm);
+  background: var(--surface-sunken); color: var(--text-primary);
+  font-family: var(--f-mono); font-size: var(--font-caption);
+}
+.input:focus { outline: none; border-color: var(--accent-cinnabar); box-shadow: 0 0 0 3px var(--focus-ring); }
+.input--wide { width: 100%; flex: 1 1 420px; min-width: 240px; }
+.outhead { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.outhead .spec { font-family: var(--f-mono); font-size: 11px; line-height: 18px; color: var(--text-secondary); }
+.code {
+  width: 100%; margin: 0; padding: var(--space-3);
+  background: var(--surface-sunken); color: var(--text-primary);
+  border: 1px solid var(--border-hairline); border-radius: var(--radius-sm);
+  font: 400 var(--font-micro) / 20px var(--f-mono);
+  white-space: pre; overflow: auto; max-height: 340px;
+}
+[hidden] { display: none !important; }
+
+
+.foot {
+  display: flex; flex-direction: column; gap: 14px;
+  border-top: 1px solid var(--border-hairline); padding-top: 14px;
+}
+.foot-body { display: flex; flex-direction: column; gap: 10px; }
+.foot-body p { margin: 0; font-size: var(--font-caption); line-height: 24px; color: var(--text-secondary); }
+.foot-h {
+  margin: 0; font-family: var(--f-bold); font-weight: 400;
+  font-size: var(--font-caption); letter-spacing: 1px; color: var(--accent-ochre-text);
+}
+.linkrow { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-4); }
+.linkrow .lab { font-size: var(--font-micro); line-height: 18px; color: var(--text-secondary); }
+.linkrow a { font-size: var(--font-micro); line-height: 18px; color: var(--accent-azurite-text); text-decoration: none; border-bottom: 1px solid transparent;  }
+.linkrow a:hover { border-bottom-color: currentColor; }
+.foot-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
+.foot-left { display: flex; align-items: center; gap: var(--space-2); }
+
+.seal {
+  display: block;
+  font-style: normal;
+  width: 18px; height: 18px; border-radius: var(--radius-xs);
+  background: var(--accent-cinnabar); color: var(--text-on-accent);
+  font-family: var(--f-title); font-size: 11px; line-height: 18px; text-align: center;
+}
+.seal--title {
+  flex: 0 0 auto;
+  width: 36px; height: 36px; border-radius: var(--radius-sm);
+  font-size: 20px; line-height: 36px;
+}
+.foot-left .sign { font-family: var(--f-mono); font-size: 11px; line-height: 18px; letter-spacing: 1px; color: var(--text-secondary); }
+.foot-bar .note { font-size: 11px; line-height: 18px; color: var(--text-secondary); }
+
+
+@media (max-width: 860px) {
+  .page { padding: 32px 20px; gap: var(--space-6); }
+  h1 { font-size: 22px; line-height: 32px; }
+  .seal--title { width: 32px; height: 32px; font-size: 18px; line-height: 32px; }
+  .meta { flex-wrap: wrap; row-gap: 6px; }
+  .slot, .prow { flex-wrap: wrap; row-gap: var(--space-2); }
+  .field-label { flex: 1 0 100%; }
+  .slot .mid { flex: 1 0 100%; flex-direction: column; align-items: flex-start; gap: 6px; }
+  select, .slider { width: 100%; }
+  .input { width: 100%; }
+  .step-head { flex-wrap: wrap; row-gap: var(--space-2); }
+}
+</style>
+</head>
+<body>
+
+<main class="page">
+
+  
+  <div class="hdr">
+    <div class="topbar">
+      <span class="brand">CK3 字体作坊 · FONT WORKBENCH</span>
+      <div class="seg" role="group" aria-label="配色主题">
+        <button type="button" class="seg-btn" id="themebtn-light" aria-pressed="true">浅色</button>
+        <button type="button" class="seg-btn" id="themebtn-dark" aria-pressed="false">深色</button>
+      </div>
+    </div>
+    <div class="title-row">
+      <i class="seal seal--title" aria-hidden="true">字</i>
+      <h1>CK3 中文字体替换器</h1>
+    </div>
+    <p class="lead">把任意字体拖进来，预览游戏内的实际效果，一键生成可安装的字体 mod。全程本地运行，字体文件不会上传。</p>
+    <span class="rule" aria-hidden="true"></span>
+    <div class="meta">
+      <span class="mono">v1.0.0</span><i class="vline" aria-hidden="true"></i>
+      <span>标题 汇迹正楷 · 强调 霞鹜臻楷 · 正文 霞鹜文楷</span><i class="vline" aria-hidden="true"></i>
+      <span>本地处理 · 无上传</span>
+    </div>
+  </div>
+
+  <div class="notice notice--info">
+    <i class="bar" aria-hidden="true"></i>
+    <p>字体文件只在你的浏览器里处理，不会上传到任何服务器。</p>
+  </div>
+
+  
+  <section class="step" id="step1">
+    <div class="step-head">
+      <span class="no">01</span>
+      <h2>载入字体</h2>
+      <span class="tag tag--neutral" id="tagFonts">尚未载入</span>
+    </div>
+    <div class="step-body">
+      <div id="dropzone" role="button" tabindex="0" aria-label="点击选择字体文件，或把字体文件拖到这里">
+        <span class="dz-main">把 <b>.ttf / .otf</b> 字体文件拖到这里，或点击选择</span>
+        <span class="dz-hint" data-idle>载入后可在下方打开「自动分配」，或手动为每个槽位选择字体</span>
+        <span class="dz-hint" data-loaded>已载入，可继续追加字体</span>
+      </div>
+      <input type="file" id="fileinput" accept=".ttf,.otf" multiple hidden>
+      <div id="fontlist"></div>
+      <div class="row" id="clearrow" hidden>
+        <button class="btn btn--link" id="clearall" type="button">移除全部字体</button>
+      </div>
+      <div class="notice notice--error" id="dzerr" hidden>
+        <i class="bar" aria-hidden="true"></i>
+        <p id="dzerrtext"></p>
+      </div>
+    </div>
+  </section>
+
+  
+  <section class="step" id="step2">
+    <div class="step-head">
+      <span class="no">02</span>
+      <h2>分配槽位</h2>
+      <span class="tag tag--neutral" id="tagSlots">全部使用原版</span>
+    </div>
+    <div class="step-body">
+      <div class="panel panel--flush">
+        <div id="slots"></div>
+
+        <div class="prow">
+          <span class="field-label">斜体跟随</span>
+          <span class="where">斜体与粗斜体锁定跟随正文常规与加粗（游戏内极少单独使用）；关闭后可单独指定</span>
+          <button type="button" class="switch" id="italicfollow" role="switch" aria-checked="true" aria-label="斜体跟随主字体"></button>
+        </div>
+
+        <div class="prow">
+          <span class="field-label">自动分配</span>
+          <span class="where">按文件名推断槽位；没认出的字体按顺序填进空槽。打开会重新分配全部字体</span>
+          <button type="button" class="switch" id="autoassign" role="switch" aria-checked="false" aria-label="自动分配槽位"></button>
+        </div>
+
+        <div class="prow">
+          <span class="field-label">拉丁数字</span>
+          <span class="where">汉字用你选的字体，字母与数字仍用游戏原版，避免风格突变</span>
+          <button type="button" class="switch" id="latinall" role="switch" aria-checked="true" aria-label="全部槽位保持原版拉丁"></button>
+        </div>
+
+        <div class="prow">
+          <span class="field-label">预览字号</span>
+          <span class="where">浏览器渲染比游戏内偏大，按倍数校正预览</span>
+          <input type="range" class="slider" id="pvscale" min="0.80" max="1.20" step="0.02" value="0.92"
+                 aria-label="预览字号倍率">
+          <span class="tag tag--neutral" id="pvscaleval">0.92em</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+  <section class="step" id="step3">
+    <div class="step-head">
+      <span class="no">03</span>
+      <h2>预览效果</h2>
+      <button type="button" class="btn btn--link" id="resetbtn">全部恢复原版</button>
+      <span class="tag tag--neutral">实机字号排序</span>
+    </div>
+    <div class="step-body">
+      <div id="preview"></div>
+    </div>
+  </section>
+
+  
+  <section class="step" id="step4">
+    <div class="step-head">
+      <span class="no">04</span>
+      <h2>生成字体 mod</h2>
+      <span class="tag tag--neutral">导出为 .zip</span>
+    </div>
+    <div class="step-body">
+      <div class="panel">
+        <label class="label" for="modname">mod 名称（仅英文，会作为文件夹名）</label>
+
+        <div class="row">
+          <input id="modname" class="input" value="My_Chinese_Fonts" spellcheck="false" autocomplete="off">
+          <button class="btn btn--primary" id="genbtn" type="button">下载字体 mod（.zip）</button>
+          <button class="btn btn--ghost" id="copybtn" type="button">复制 fonts.font</button>
+        </div>
+
+        <div class="row">
+          <button class="btn btn--md btn--ghost" id="sendbtn" type="button" disabled>选择游戏 mod 目录</button>
+          <span class="where" id="sendhint">浏览器无法写入游戏目录，请先下载再手动解压</span>
+          <button class="btn btn--link" id="uninstallbtn" type="button" hidden>移除已写入的 mod</button>
+        </div>
+
+        <div class="row" id="confirmrow" hidden>
+          <span class="where" id="confirmtxt">确认写入所选目录？</span>
+          <button class="btn btn--md btn--primary" id="confirmyes" type="button">确认写入</button>
+          <button class="btn btn--md btn--ghost" id="confirmno" type="button">取消</button>
+        </div>
+
+        <div class="row" id="pathrow" hidden>
+          <input id="modpath" class="input input--wide" spellcheck="false" autocomplete="off"
+                 placeholder="C:/Users/你的用户名/Documents/Paradox Interactive/Crusader Kings III/mod">
+          <button class="btn btn--md btn--ghost" id="pathok" type="button">用这个路径发送</button>
+        </div>
+
+        <div class="notice notice--ochre">
+          <i class="bar" aria-hidden="true"></i>
+          <p>生成的 mod 会<b>整文件替换</b> fonts/fonts.font，同一时间只能启用一个字体 mod——<b>包括工坊订阅的中文字体包（如 Chinese Fonts 系列）</b>，进游戏前需要在启动器里把它们先停用，否则你的字体不会生效。</p>
+        </div>
+
+        <div class="notice notice--success" id="genmsg" hidden>
+          <i class="bar" aria-hidden="true"></i>
+          <p id="genmsgtext"></p>
+        </div>
+
+        <div class="outhead">
+          <span class="spec">生成的 fonts/fonts.font</span>
+          <button class="btn btn--bare" id="copybtn2" type="button">复制内容</button>
+        </div>
+        <pre class="code" id="fontout"></pre>
+      </div>
+    </div>
+  </section>
+
+  
+  <footer class="foot">
+    <div class="foot-body">
+      <p class="foot-h">机制与限制</p>
+      <p>生成的 mod 通过 <code>fonts/fonts.font</code> 整文件替换生效，同一时间只能启用一个字体 mod。版本声明为 1.*.*，游戏更新不失效。</p>
+      <p>字体授权：字体文件由你自己提供，打包结果也只保存在你电脑上，自用没有授权问题；但若要把打包结果分享给他人，请先确认所用字体允许再分发。</p>
+      <div class="linkrow">
+        <span class="lab">推荐开源字体（OFL）：</span>
+        <a href="https://github.com/lxgw/LxgwWenKaiGB" target="_blank" rel="noopener">霞鹜文楷 GB</a>
+        <a href="https://github.com/lxgw/LxgwZhenKai" target="_blank" rel="noopener">霞鹜臻楷</a>
+        <a href="https://github.com/adobe-fonts/source-han-sans" target="_blank" rel="noopener">思源黑体</a>
+        <a href="https://fonts.google.com/noto" target="_blank" rel="noopener">Noto CJK 系列</a>
+      </div>
+    </div>
+    <div class="foot-bar">
+      <span class="foot-left"><i class="seal" aria-hidden="true">字</i><span class="sign">v1.0.0</span></span>
+      <span class="note">本地运行 · 不上传任何文件 · 无需登录</span>
+    </div>
+  </footer>
+
+</main>
+
+<script src="fonttool_core.js"></script>
+<script>
+"use strict";
+
+const T = window.CK3FontTool;
+const $ = (id) => document.getElementById(id);
+
+const ICON_X = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
+  '<path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+const ICON_MI = '<svg class="mi" width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">' +
+  '<rect x="0.5" y="0.5" width="39" height="39" stroke="currentColor"/>' +
+  '<path d="M20 0V40M0 20H40M0 0L40 40M40 0L0 40" stroke="currentColor" stroke-opacity="0.55"/></svg>';
+
+const PREVIEW_BLOCKS = [
+  { slot:"title", head:"标题 / 地图", size:30, note:"剧本名、头衔名与地图标签，游戏内最大的文字", lines:[
+    "升平乐　白手起家　月满无缺　沉沦关头　英格兰的命运",
+    "青徐　淮南　江浙　杭州　明州",
+  ]},
+  { slot:"bodyBold", head:"加粗汉字", size:22, note:"窗口标题、派系、宣战理由等强调文字", lines:[
+    "推荐开局　成就可用　铁人模式",
+    "存在派系　·　宣战理由",
+  ]},
+  { slot:"bodyRegular", head:"正文汉字", size:16, note:"事件正文、tooltip、界面说明", lines:[
+    "唐室倾覆，宋祚方兴。开二百载未有之治世——贡赋如江河，奔涌汇于京师，叛乱鲜有且甫起即平，朝政尽归贤德之人。",
+    "你是王朝兴衰中的中立。检查每个图标查看当前局势详情。",
+    "秦观因丧父而家道中落，艰难困苦未曾磨灭少年之志，反而在恶劣环境中将他一片赤诚砥砺得更为灼热。",
+  ]},
+  { slot:"bodyRegular", head:"数字 / 西文", size:13, note:"游戏内最小的文字：资源数字、日期、热键（用正文槽字体的西文；缺字时游戏内由原版接管）", lines:[
+    "867　1066　1178　公元1066年9月15日",
+    "+0.7　+5.9　12.4　93%　0/4　F2　DLC:",
+  ]},
+];
+
+const SAMPLE_CHARS = Array.from(new Set(PREVIEW_BLOCKS.map(b => b.lines.join("")).join(""))).filter(ch => ch.trim() !== "");
+
+const SLOT_ORDER = ["title", "map", "bodyBold", "bodyRegular", "bodyItalic", "bodyBoldItalic"];
+const OWN_SLOTS = ["title", "map", "bodyBold", "bodyRegular"]
+  .map(id => T.SLOTS.find(s => s.id === id))
+  .filter(Boolean);
+
+const LATIN_SLOTS = T.SLOTS.filter(s => T.LATIN[s.id]);
+
+let assignMode = "manual";   
+let italicFollow = true;     
+let pvScale = 0.92;
+
+function boot(){
+  
+  const root = document.documentElement;
+  const segs = { light: $("themebtn-light"), dark: $("themebtn-dark") };
+  function applyTheme(theme){
+    root.setAttribute("data-theme", theme);
+    segs.light.setAttribute("aria-pressed", theme === "light" ? "true" : "false");
+    segs.dark.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+    try { localStorage.setItem("ck3ft-theme", theme); } catch (e) {  }
+  }
+  segs.light.addEventListener("click", () => applyTheme("light"));
+  segs.dark.addEventListener("click", () => applyTheme("dark"));
+  applyTheme(root.getAttribute("data-theme") || "light");
+
+  
+  const dz = $("dropzone"), fi = $("fileinput");
+  function showError(msg){
+    $("dzerrtext").textContent = msg;
+    $("dzerr").hidden = false;
+  }
+  function clearError(){ $("dzerr").hidden = true; }
+
+  dz.addEventListener("click", () => fi.click());
+  dz.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") { e.preventDefault(); fi.click(); }
+  });
+  dz.addEventListener("dragover", (e) => { e.preventDefault(); dz.classList.add("drag"); });
+  dz.addEventListener("dragleave", () => dz.classList.remove("drag"));
+  dz.addEventListener("drop", (e) => {
+    e.preventDefault(); dz.classList.remove("drag");
+    handleFiles(e.dataTransfer.files);
+  });
+  fi.addEventListener("change", () => { handleFiles(fi.files); fi.value = ""; });
+
+  async function handleFiles(list){
+    const rejects = [];
+    for (const file of list){
+      if (!/\.(ttf|otf)$/i.test(file.name)){ rejects.push(file.name + "：只接受 .ttf / .otf"); continue; }
+      let buf;
+      try { buf = await file.arrayBuffer(); } catch (e){ rejects.push(file.name + "：无法读取"); continue; }
+      const before = Object.assign({}, T.state.slots);
+      let f;
+      try { f = T.loadFontFromBuffer(file.name, buf); }
+      catch (e){ rejects.push(file.name + "：不是有效的字体文件"); continue; }
+      if (assignMode === "manual") Object.assign(T.state.slots, before);
+      if (typeof FontFace !== "undefined"){
+        try { document.fonts.add(new FontFace("ck3f_" + f.slug, f.data.slice(0).buffer)); } catch (e) {  }
+      }
+    }
+    if (rejects.length) showError(rejects.join("；") + "。请确认字体本身没有损坏，或换一个文件重试。");
+    else clearError();
+    
+    if (assignMode === "auto") fillEmptySlots();
+    renderFontList(); renderSlots(); renderTags(); updatePreview(); refreshOutput();
+  }
+
+  
+  function assignedLabels(f){
+    return T.SLOTS.filter(s => T.state.slots[s.id] === f.id).map(s => s.label);
+  }
+  function renderFontList(){
+    const box = $("fontlist");
+    box.innerHTML = "";
+    $("clearrow").hidden = !T.state.fonts.length;
+    for (const f of T.state.fonts){
+      const labels = assignedLabels(f);
+      const card = document.createElement("div");
+      card.className = "fcard";
+      const glyph = document.createElement("div");
+      glyph.className = "glyph";
+      
+      glyph.style.fontFamily = "'ck3f_" + f.slug + "', var(--f-title)";
+      glyph.textContent = "永";
+      const info = document.createElement("div");
+      info.className = "info";
+      const name = document.createElement("div");
+      name.className = "fname"; name.title = f.origName; name.textContent = f.origName;
+      const path = document.createElement("div");
+      path.className = "fpath";
+      path.textContent = labels.length
+        ? "→ " + labels.join("、")
+        : "→ 未指定槽位，预览时仍在用游戏原版";
+      info.append(name, path);
+      
+      if (!f._probe) f._probe = T.readCmapLookup(f.data);
+      const miss = f._probe ? SAMPLE_CHARS.filter(ch => !f._probe(ch.codePointAt(0))) : [];
+      if (miss.length){
+        const missLine = document.createElement("div");
+        missLine.className = "fmiss";
+        missLine.title = "这些字不在字体里，游戏内会由兜底字体渲染";
+        missLine.textContent = "样张缺 " + miss.length + " 字：" + miss.slice(0, 10).join("") + (miss.length > 10 ? "…" : "");
+        info.appendChild(missLine);
+      }
+      const tag = document.createElement("span");
+      tag.className = "tag " + (labels.length ? "tag--malachite" : "tag--ochre");
+      tag.textContent = labels.length ? "已分配" : "待替换";
+      const del = document.createElement("button");
+      del.className = "btn-x"; del.type = "button"; del.title = "移除";
+      del.innerHTML = ICON_X;
+      del.addEventListener("click", () => {
+        T.state.fonts = T.state.fonts.filter(x => x !== f);
+        for (const s of T.SLOTS) if (T.state.slots[s.id] === f.id) T.state.slots[s.id] = s.follow ? "follow" : "vanilla";
+        clearError();
+        renderFontList(); renderSlots(); renderTags(); updatePreview(); refreshOutput();
+      });
+      card.append(glyph, info, tag, del);
+      box.appendChild(card);
+    }
+  }
+
+  
+  function renderSlots(){
+    const box = $("slots");
+    box.innerHTML = "";
+    
+    for (const sid of SLOT_ORDER){
+      const s = T.SLOTS.find(x => x.id === sid);
+      const italic = !!s.follow;
+      const locked = italic && italicFollow;
+      const row = document.createElement("div");
+      row.className = "slot";
+
+      const lab = document.createElement("span");
+      lab.className = "field-label"; lab.textContent = s.label;
+
+      const mid = document.createElement("span");
+      mid.className = "mid";
+      const where = document.createElement("span");
+      where.className = "where"; where.textContent = s.where;
+      mid.appendChild(where);
+      
+      if (T.LATIN[s.id]){
+        const chk = document.createElement("label");
+        chk.className = "chk";
+        const cb = document.createElement("input");
+        cb.type = "checkbox"; cb.checked = !!T.state.latinFirst[s.id];
+        cb.addEventListener("change", () => {
+          T.state.latinFirst[s.id] = cb.checked; syncLatinSwitch(); updatePreview(); refreshOutput();
+        });
+        chk.append(cb, document.createTextNode("拉丁数字保持原版"));
+        mid.appendChild(chk);
+      }
+
+      const sel = document.createElement("select");
+      sel.dataset.slot = s.id;
+      sel.setAttribute("aria-label", s.label);
+      if (locked){
+        sel.disabled = true;
+        const main = T.SLOTS.find(x => x.id === s.follow);
+        const fl = document.createElement("option");
+        fl.value = "follow";
+        fl.textContent = "跟随「" + main.label + "」";
+        sel.appendChild(fl);
+        sel.value = "follow";
+        T.state.slots[s.id] = "follow";
+      } else {
+        const van = document.createElement("option");
+        van.value = "vanilla"; van.textContent = "使用游戏原版";
+        sel.appendChild(van);
+        for (const f of T.state.fonts){
+          const op = document.createElement("option");
+          op.value = f.id; op.textContent = f.origName;
+          sel.appendChild(op);
+        }
+        sel.value = T.state.slots[s.id];
+        if (![...sel.options].some(o => o.value === sel.value)) { sel.value = "vanilla"; T.state.slots[s.id] = "vanilla"; }
+      }
+      sel.addEventListener("change", () => {
+        T.state.slots[s.id] = sel.value;
+        renderFontList(); renderTags(); updatePreview(); refreshOutput();
+      });
+
+      row.append(lab, mid, sel);
+      box.appendChild(row);
+    }
+  }
+
+  
+  function renderTags(){
+    const tf = $("tagFonts");
+    const n = T.state.fonts.length;
+    tf.textContent = n ? "已载入 " + n + " 个" : "尚未载入";
+    tf.className = "tag " + (n ? "tag--malachite" : "tag--neutral");
+
+    const ts = $("tagSlots");
+    const left = OWN_SLOTS.filter(s => T.state.slots[s.id] === "vanilla").length;
+    ts.textContent = left === 0 ? "全部已分配" : left + " 个待替换";
+    ts.className = "tag " + (left === 0 ? "tag--malachite" : "tag--ochre");
+  }
+
+  
+  function buildPreview(){
+    const box = $("preview");
+    box.innerHTML = "";
+    for (const b of PREVIEW_BLOCKS){
+      const blk = document.createElement("div");
+      blk.className = "pvblock";
+      blk.dataset.slot = b.slot;
+      blk.dataset.size = b.size;
+      blk.dataset.head = b.head;
+      box.appendChild(blk);
+    }
+    box.dataset.mode = "blocks";
+  }
+  function updatePreview(){
+    const box = $("preview");
+
+    
+    if (!T.state.fonts.length){
+      box.innerHTML = "";
+      const empty = document.createElement("div");
+      empty.className = "pvempty";
+      empty.innerHTML = ICON_MI;
+      const msg = document.createElement("p");
+      msg.textContent = "还没有载入任何字体。载入后这里会按游戏内字号从大到小，用真实文案预览实际效果。";
+      const go = document.createElement("button");
+      go.type = "button"; go.className = "btn btn--link";
+      go.textContent = "选择字体文件";
+      go.addEventListener("click", () => fi.click());
+      empty.append(msg, go);
+      box.appendChild(empty);
+      box.dataset.mode = "empty";
+      return;
+    }
+
+    if (box.dataset.mode !== "blocks") buildPreview();
+
+    for (const blk of box.children){
+      const b = PREVIEW_BLOCKS.find(x => x.head === blk.dataset.head && x.size === +blk.dataset.size);
+      const f = T.resolveSlot(blk.dataset.slot);
+      const ff = f ? "'ck3f_" + f.slug + "', serif" : "Georgia,'Times New Roman',serif";
+      blk.innerHTML = "";
+
+      const head = document.createElement("div");
+      head.className = "pvhead";
+      const spec = document.createElement("span");
+      spec.className = "spec";
+      spec.title = b ? b.note : "";
+      spec.textContent = blk.dataset.head + " · " + blk.dataset.size + "px · " + (f ? f.origName : "游戏原版");
+      const tag = document.createElement("span");
+      tag.className = "tag " + (f ? "tag--malachite" : "tag--neutral");
+      tag.textContent = f ? "已替换" : "使用原版";
+      head.append(spec, tag);
+      blk.appendChild(head);
+
+      if (f){
+        for (const line of b.lines){
+          const d = document.createElement("div");
+          d.className = "pvtext";
+          d.style.fontFamily = ff;
+          d.style.fontSize = "calc(" + b.size + "px * var(--pv-scale, 1))";
+          d.textContent = line;
+          blk.appendChild(d);
+        }
+      } else {
+        const empty = document.createElement("div");
+        empty.className = "pvempty";
+        empty.innerHTML = ICON_MI;
+        const msg = document.createElement("p");
+        msg.textContent = "这个字号还没有指定字体，仍在用游戏原版";
+        const go = document.createElement("button");
+        go.type = "button"; go.className = "btn btn--bare";
+        go.textContent = "去分配";
+        go.addEventListener("click", () => {
+          $("step2").scrollIntoView({ behavior: "smooth", block: "start" });
+          const sel = $("slots").querySelector("select");
+          if (sel) sel.focus();
+        });
+        empty.append(msg, go);
+        blk.appendChild(empty);
+      }
+    }
+  }
+
+  
+  const sw = $("latinall");
+  function syncLatinSwitch(){
+    const on = LATIN_SLOTS.every(s => T.state.latinFirst[s.id]);
+    sw.setAttribute("aria-checked", on ? "true" : "false");
+  }
+  sw.addEventListener("click", () => {
+    const on = sw.getAttribute("aria-checked") === "true";
+    for (const s of LATIN_SLOTS) T.state.latinFirst[s.id] = !on;
+    renderSlots(); syncLatinSwitch(); updatePreview(); refreshOutput();
+  });
+
+  const rng = $("pvscale");
+  function applyScale(){
+    pvScale = parseFloat(rng.value);
+    $("preview").style.setProperty("--pv-scale", pvScale);
+    $("pvscaleval").textContent = pvScale.toFixed(2) + "em";
+    const span = rng.max - rng.min;
+    rng.style.setProperty("--fill", ((pvScale - rng.min) / span * 100).toFixed(1) + "%");
+  }
+  rng.addEventListener("input", applyScale);
+
+  
+  const ifw = $("italicfollow");
+  ifw.addEventListener("click", () => {
+    italicFollow = ifw.getAttribute("aria-checked") !== "true";
+    ifw.setAttribute("aria-checked", italicFollow ? "true" : "false");
+    if (italicFollow){
+      T.state.slots.bodyItalic = "follow";
+      T.state.slots.bodyBoldItalic = "follow";
+    } else {
+      if (T.state.slots.bodyItalic === "follow") T.state.slots.bodyItalic = "vanilla";
+      if (T.state.slots.bodyBoldItalic === "follow") T.state.slots.bodyBoldItalic = "vanilla";
+    }
+    renderSlots(); renderTags(); updatePreview(); refreshOutput();
+  });
+
+  
+  const asw = $("autoassign");
+  asw.addEventListener("click", () => {
+    assignMode = asw.getAttribute("aria-checked") === "true" ? "manual" : "auto";
+    asw.setAttribute("aria-checked", assignMode === "auto" ? "true" : "false");
+    if (assignMode === "auto" && T.state.fonts.length) redistributeAll();
+  });
+
+  
+  function fillEmptySlots(){
+    const used = () => Object.values(T.state.slots);
+    let i = 0;
+    for (const s of ["bodyRegular", "bodyBold", "title", "map"]){
+      if (T.state.slots[s] !== "vanilla") continue;
+      while (i < T.state.fonts.length && used().includes(T.state.fonts[i].id)) i++;
+      if (i >= T.state.fonts.length) break;
+      T.state.slots[s] = T.state.fonts[i].id;
+      i++;
+    }
+  }
+  function redistributeAll(){
+    for (const s of T.SLOTS) T.state.slots[s.id] = s.follow ? (italicFollow ? "follow" : "vanilla") : "vanilla";
+    for (const f of T.state.fonts) T.autoAssign(f);
+    fillEmptySlots();
+    renderFontList(); renderSlots(); renderTags(); updatePreview(); refreshOutput();
+  }
+
+  
+  const CAN_WRITE = typeof window.showDirectoryPicker === "function";
+  const sendbtn = $("sendbtn"), sendhint = $("sendhint");
+  const confirmrow = $("confirmrow"), confirmtxt = $("confirmtxt");
+  const pathrow = $("pathrow"), modpath = $("modpath");
+  let dirHandle = null;
+
+  if (CAN_WRITE){
+    sendbtn.disabled = false;
+    sendhint.textContent = "直接写入游戏 mod 目录：文档\\Paradox Interactive\\Crusader Kings III\\mod（首次使用需授权一次）";
+  }
+
+  function idbOpen(){
+    return new Promise((res, rej) => {
+      const rq = indexedDB.open("ck3ft", 1);
+      rq.onupgradeneeded = () => rq.result.createObjectStore("kv");
+      rq.onsuccess = () => res(rq.result);
+      rq.onerror = () => rej(rq.error);
+    });
+  }
+  async function idbSet(k, v){
+    try {
+      const db = await idbOpen();
+      await new Promise((res, rej) => {
+        const tx = db.transaction("kv", "readwrite");
+        tx.objectStore("kv").put(v, k);
+        tx.oncomplete = res; tx.onerror = () => rej(tx.error);
+      });
+    } catch (e) {  }
+  }
+  async function idbGet(k){
+    try {
+      const db = await idbOpen();
+      return await new Promise((res, rej) => {
+        const rq = db.transaction("kv", "readonly").objectStore("kv").get(k);
+        rq.onsuccess = () => res(rq.result); rq.onerror = () => rej(rq.error);
+      });
+    } catch (e) { return null; }
+  }
+
+  
+  async function detectBase(dir){
+    try {
+      for await (const [name, h] of dir.entries()){
+        if (h.kind !== "file" || !/\.mod$/i.test(name)) continue;
+        const text = await (await h.getFile()).text();
+        const m = text.match(/path\s*=\s*"([^"]+)"/);
+        if (m && /^([A-Za-z]:[\\/]|\/)/.test(m[1])) return m[1].replace(/[\\/][^\\/]+$/, "");
+      }
+    } catch (e) {  }
+    return null;
+  }
+
+  async function writeEntries(dir, entries){
+    let n = 0;
+    for (const e of entries){
+      const parts = e.path.split("/");
+      let cur = dir;
+      for (let i = 0; i < parts.length - 1; i++) cur = await cur.getDirectoryHandle(parts[i], { create: true });
+      const fh = await cur.getFileHandle(parts[parts.length - 1], { create: true });
+      const w = await fh.createWritable();
+      await w.write(e.data);
+      await w.close();
+      n++;
+    }
+    return n;
+  }
+
+  
+  function entriesWithPath(base){
+    const mod = T.state.modName;
+    const outer = T.buildOuterMod(mod)
+      .replace("REPLACE_WITH_ABSOLUTE_PATH", base.replace(/[\\/]+$/, "") + "/" + mod);
+    return T.buildEntries().map(e =>
+      (e.path.endsWith(".mod") && !e.path.includes("/"))
+        ? { path: e.path, data: new TextEncoder().encode(outer) }
+        : e);
+  }
+
+  async function ensureDir(){
+    if (dirHandle){
+      const p = await dirHandle.requestPermission({ mode: "readwrite" });
+      if (p === "granted") return dirHandle;
+      dirHandle = null;
+    }
+    const saved = await idbGet("dir");
+    if (saved){
+      const p = await saved.requestPermission({ mode: "readwrite" });
+      if (p === "granted") { dirHandle = saved; return dirHandle; }
+    }
+    try {
+      const d = await window.showDirectoryPicker({ id: "ck3moddir", mode: "readwrite", startIn: "documents" });
+      dirHandle = d;
+      await idbSet("dir", d);
+      return d;
+    } catch (e) {
+      if (!e || e.name !== "AbortError"){
+        showError("没能取得目录写入权限：" + (e && e.message ? e.message : e) +
+          "。可以直接用上面的「下载字体 mod（.zip）」再手动解压。");
+      }
+      return null;
+    }
+  }
+
+  async function sendToModDir(forcedBase){
+    if (!CAN_WRITE) return;
+    sendbtn.disabled = true;
+    try {
+      const dir = await ensureDir();
+      if (!dir) return;
+      let base = forcedBase || localStorage.getItem("ck3ft-base") || await detectBase(dir);
+      if (!base){
+        
+        pathrow.hidden = false;
+        if (!modpath.value) modpath.value = "C:/Users/你的用户名/Documents/Paradox Interactive/Crusader Kings III/mod";
+        sendhint.textContent = "这个目录里没有已安装的 mod，无法自动识别路径，请填一次上面的完整路径";
+        modpath.focus();
+        return;
+      }
+      base = base.replace(/[\\/]+$/, "");
+      const n = await writeEntries(dir, entriesWithPath(base));
+      try { localStorage.setItem("ck3ft-base", base); } catch (e) {  }
+      pathrow.hidden = true;
+      clearError();
+      $("genmsgtext").textContent = "已把 " + n + " 个文件写进 mod 目录：" + T.state.modName +
+        "（含 " + T.state.modName + ".mod 与 fonts/fonts.font）。回游戏启动器勾选即可。";
+      $("genmsg").hidden = false;
+      try {
+        const list = readLastwrite();
+        if (!list.includes(T.state.modName)) list.push(T.state.modName);
+        writeLastwrite(list);
+      } catch (e) {  }
+      refreshUninstall();
+      sendhint.textContent = "已写入。之后每次发送仍会先确认，再覆盖更新。";
+    } catch (e) {
+      showError("写入失败：" + (e && e.message ? e.message : e) +
+        "。可以直接下载 .zip 再手动解压。");
+    } finally {
+      sendbtn.disabled = false;
+    }
+  }
+
+  
+  let armed = false;
+  const SEND_LABEL = "发送到游戏 mod 目录";
+  function disarmSend(){
+    armed = false;
+    sendbtn.classList.remove("btn--primary");
+    sendbtn.classList.add("btn--ghost");
+    sendbtn.textContent = "选择游戏 mod 目录";
+  }
+  sendbtn.addEventListener("click", async () => {
+    if (!CAN_WRITE) return;
+    if (!armed){
+      const dir = await ensureDir();
+      if (!dir){ disarmSend(); sendhint.textContent = "游戏 mod 目录通常在：文档\\Paradox Interactive\\Crusader Kings III\\mod"; return; }
+      dirHandle = dir;
+      armed = true;
+      sendbtn.classList.remove("btn--ghost");
+      sendbtn.classList.add("btn--primary");
+      sendbtn.textContent = SEND_LABEL;
+      
+      const found = await scanFontMods(dir);
+      if (found.length){
+        const list = readLastwrite();
+        for (const n of found) if (!list.includes(n)) list.push(n);
+        writeLastwrite(list);
+      }
+      refreshUninstall();
+      sendhint.textContent = "已选定目录「" + dir.name + "」，游戏 mod 目录通常在：文档\\Paradox Interactive\\Crusader Kings III\\mod";
+      return;
+    }
+    confirmtxt.textContent = "确认把 mod「" + T.state.modName + "」写入目录「" + dirHandle.name + "」？写入会覆盖同名文件。";
+    confirmrow.hidden = false;
+  });
+  $("confirmyes").addEventListener("click", async () => {
+    confirmrow.hidden = true;
+    await sendToModDir();
+  });
+  $("confirmno").addEventListener("click", () => { confirmrow.hidden = true; });
+
+  
+  async function scanFontMods(dir){
+    const found = [];
+    try {
+      for await (const [name, h] of dir.entries()){
+        if (h.kind !== "file" || !/\.mod$/i.test(name)) continue;
+        const base = name.replace(/\.mod$/i, "");
+        const text = await (await h.getFile()).text();
+        const m = text.match(/path\s*=\s*"([^"]+)"/);
+        if (!m || !new RegExp("[\\\\/]" + base.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "$").test(m[1])) continue;
+        try {
+          const sub = await dir.getDirectoryHandle(base);
+          await (await sub.getDirectoryHandle("fonts")).getFileHandle("fonts.font");
+          found.push(base);
+        } catch (e) {  }
+      }
+    } catch (e) {  }
+    return found;
+  }
+
+  
+  const uninstallbtn = $("uninstallbtn");
+  let uninstallArmed = false;
+  function readLastwrite(){
+    try { return JSON.parse(localStorage.getItem("ck3ft-lastwrite") || "[]"); }
+    catch (e) { return []; }
+  }
+  function writeLastwrite(list){
+    try { localStorage.setItem("ck3ft-lastwrite", JSON.stringify(list)); } catch (e) {  }
+  }
+  function refreshUninstall(){
+    const list = readLastwrite();
+    uninstallbtn.hidden = !list.length;
+    if (!uninstallArmed) uninstallbtn.textContent = list.length === 1
+      ? "移除已写入的 mod「" + list[0] + "」"
+      : "移除已写入的 mod（" + list.length + " 个）";
+  }
+  uninstallbtn.addEventListener("click", async () => {
+    const list = readLastwrite();
+    if (!list.length) return;
+    if (!uninstallArmed){
+      uninstallArmed = true;
+      uninstallbtn.textContent = "确认移除 " + (list.length === 1
+        ? "「" + list[0] + "」"
+        : list.length + " 个 mod：" + list.join("、")) + "？再点一次执行";
+      return;
+    }
+    uninstallArmed = false;
+    const dir = await ensureDir();
+    if (!dir){ disarmSend(); return; }
+    const removed = [], missing = [], failed = [];
+    for (const name of list){
+      try {
+        await dir.removeEntry(name + ".mod");
+        await dir.removeEntry(name, { recursive: true });
+        removed.push(name);
+      } catch (e) {
+        if (e && e.name === "NotFoundError"){ missing.push(name); }
+        else failed.push(name);
+      }
+    }
+    writeLastwrite(list.filter(n => !removed.includes(n) && !missing.includes(n)));
+    clearError();
+    let msg = "";
+    if (removed.length) msg += "已从游戏 mod 目录移除：" + removed.join("、") + "（含外层 .mod 与字体文件夹）。";
+    if (missing.length) msg += "「" + missing.join("、") + "」在目录里已不存在（可能被手动删过），已从列表去掉。";
+    if (failed.length) msg += "移除失败：" + failed.join("、") + "——文件可能被游戏或其他程序占用，关闭游戏后可再试，或手动删除。";
+    $("genmsgtext").textContent = msg || "没有需要移除的 mod。";
+    $("genmsg").hidden = false;
+    if (!failed.length) sendhint.textContent = "已移除。可重新写入。";
+    refreshUninstall();
+  });
+  refreshUninstall();
+  $("pathok").addEventListener("click", () => {
+    const v = modpath.value.trim();
+    if (!v) { modpath.focus(); return; }
+    sendToModDir(v);
+  });
+
+  
+  function refreshOutput(){ $("fontout").textContent = T.buildFontsFont(); }
+
+  $("resetbtn").addEventListener("click", () => {
+    for (const s of T.SLOTS) T.state.slots[s.id] = s.follow ? (italicFollow ? "follow" : "vanilla") : "vanilla";
+    renderFontList(); renderSlots(); renderTags(); updatePreview(); refreshOutput();
+    clearError();
+  });
+  $("clearall").addEventListener("click", () => {
+    T.state.fonts = [];
+    for (const s of T.SLOTS) T.state.slots[s.id] = s.follow ? (italicFollow ? "follow" : "vanilla") : "vanilla";
+    renderFontList(); renderSlots(); renderTags(); updatePreview(); refreshOutput();
+    clearError();
+  });
+  $("modname").addEventListener("input", (e) => {
+    T.state.modName = e.target.value.replace(/[^A-Za-z0-9_-]/g, "_") || "My_Chinese_Fonts";
+    e.target.value = T.state.modName;
+  });
+  $("genbtn").addEventListener("click", () => {
+    const zip = T.buildZip(T.buildEntries());
+    const blob = new Blob([zip], { type: "application/zip" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = T.state.modName + "_fontmod.zip";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    $("genmsgtext").textContent = "已生成 " + T.state.modName + "_fontmod.zip（" +
+      (zip.length / 1048576).toFixed(1) + " MB）。所载字体已按原版行距自动校正（只改度量不改字形）。解压到游戏 mod 目录，按 README.txt 改一行路径即可。";
+    $("genmsg").hidden = false;
+  });
+  function copyFonts(){
+    navigator.clipboard.writeText(T.buildFontsFont()).then(() => {
+      const b = $("copybtn"), b2 = $("copybtn2");
+      const t1 = b.textContent, t2 = b2.textContent;
+      b.textContent = "已复制"; b2.textContent = "已复制";
+      setTimeout(() => { b.textContent = t1; b2.textContent = t2; }, 1500);
+    });
+  }
+  $("copybtn").addEventListener("click", copyFonts);
+  $("copybtn2").addEventListener("click", copyFonts);
+
+  
+  renderFontList(); renderSlots(); renderTags(); buildPreview(); syncLatinSwitch(); applyScale();
+  updatePreview(); refreshOutput();
+
+  
+  window.__refreshUI = () => { renderFontList(); renderSlots(); renderTags(); updatePreview(); refreshOutput(); };
+}
+
+boot();
+</script>
+</body>
+</html>

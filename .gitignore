@@ -1,0 +1,16 @@
+fixtures/
+dist/
+garden-gpt-image-2/
+.mimosa/
+.workbuddy/
+*.pdf
+test_output.zip
+*.zip
+fixtures/fonts_page_full/
+build_publish_mods.js
+patch_metrics.py
+make_cover.py
+make_text_layer.py
+HANDOFF.md
+measure_coverage.js
+__pycache__/
